@@ -1,7 +1,9 @@
 //import 'dart:developer';
 import 'dart:io';
 
+import 'package:codigo6_qr/pages/register_page.dart';
 import 'package:codigo6_qr/ui/general/colors.dart';
+import 'package:codigo6_qr/ui/widgets/common_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -14,6 +16,8 @@ class _ScannerPageState extends State<ScannerPage> {
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+
+  String urlData = "";
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
     //log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
@@ -31,7 +35,10 @@ class _ScannerPageState extends State<ScannerPage> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
-        print(result!.code);
+        if (result != null && result!.code != null) {
+          print(result!.code);
+          urlData = result!.code!;
+        }
       });
     });
 
@@ -83,48 +90,57 @@ class _ScannerPageState extends State<ScannerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(children: [
-        Expanded(
-          flex: 4,
-          child: _buildQrView(context), //SizedBox()
-        ),
-        Expanded(
-          flex: 1,
-          child: Container(
-            width: double.infinity,
-            color: Colors.amber,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Por favor escanea un codigo QR",
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 40.0,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Registrar ahora",
-                      style: TextStyle(
-                        color: kBrandSecondaryColor,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: kBrandPrimaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14.0),
-                      ),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 4,
+            child: _buildQrView(context), //SizedBox()
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 18.0,
+              ),
+              width: double.infinity,
+              color: Colors.amber,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    urlData.isEmpty
+                        ? "Por favor escanea un codigo QR"
+                        : urlData,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  CommonButtonWidget(
+                    text: "Registrar ahora",
+                    onPressed: urlData.isNotEmpty
+                        ? () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RegisterPage(),
+                              ),
+                            );
+                          }
+                        : null,
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }
