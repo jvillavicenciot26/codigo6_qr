@@ -1,24 +1,62 @@
 import 'dart:io';
 
+import 'package:codigo6_qr/models/qr_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBAdmin {
+  static final DBAdmin _instance = DBAdmin._();
+
+  DBAdmin._();
+  factory DBAdmin() {
+    return _instance;
+  }
+
   Database? _myDatabase;
 
-  checkDatabase() {}
+  Future<Database?> _checkDatabase() async {
+    if (_myDatabase == null) {
+      _myDatabase = await _initDatabase();
+    }
+    return _myDatabase;
+  }
 
-  Future initDatabase() async {
+  Future<Database> _initDatabase() async {
     Directory myDirectory = await getApplicationDocumentsDirectory();
     String pathDatabase = join(myDirectory.path, "QrDB.db");
-    openDatabase(
+    return await openDatabase(
       pathDatabase,
       version: 1,
-      onCreate: (Database db, int version) {
-        db.execute(
-            "CREATE TABLE QR (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, url TEXT, datetime TEXT)");
+      onCreate: (Database db, int version) async {
+        await db.execute(
+            "CREATE TABLE QR (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, url TEXT, observation TEXT, datetime TEXT)");
       },
     );
+
+    // Database database = await openDatabase(
+    //   pathDatabase,
+    //   version: 1,
+    //   onCreate: (Database db, int version) async {
+    //     await db.execute(
+    //         "CREATE TABLE QR (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, url TEXT, datetime TEXT)");
+    //   },
+    // );
+    // return database;
+  }
+
+  getQRList() async {
+    final Database? db = await _checkDatabase();
+    List data = await db!.query("QR");
+    print(data);
+  }
+
+  Future<int> insertQR(QRModel model) async {
+    final Database? db = await _checkDatabase();
+    int value = await db!.insert(
+      "QR",
+      model.toJson(),
+    );
+    return value;
   }
 }
