@@ -126,10 +126,13 @@ class _ScannerPageState extends State<ScannerPage> {
                     text: "Registrar ahora",
                     onPressed: urlData.isNotEmpty
                         ? () {
+                            Navigator.pop(context);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => RegisterPage(),
+                                builder: (context) => RegisterPage(
+                                  url: urlData,
+                                ),
                               ),
                             );
                           }

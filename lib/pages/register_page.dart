@@ -9,6 +9,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:intl/intl.dart';
 
 class RegisterPage extends StatelessWidget {
+  String url;
+  RegisterPage({required this.url});
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _observationController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
@@ -95,12 +98,12 @@ class RegisterPage extends StatelessWidget {
                   if (_formkey.currentState!.validate()) {
                     DateFormat myFormat = DateFormat("yyyy-MM-dd");
                     String myDate = myFormat.format(DateTime.now());
-                    print(myDate);
+                    //print(myDate);
 
                     QRModel model = QRModel(
                       title: _titleController.text,
                       observation: _observationController.text,
-                      url: "http://www.",
+                      url: url,
                       datetime: myDate,
                     );
 

@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.codigo6_qr">
+
+   <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="codigo6_qr"
         android:name="${applicationName}"
