@@ -1,9 +1,68 @@
 import 'package:codigo6_qr/db/db_admin.dart';
 import 'package:codigo6_qr/models/qr_model.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HistoryPage extends StatelessWidget {
+  void myAlert(BuildContext context, QRModel model) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(10.0),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                "Cerrar",
+              ),
+            ),
+          ],
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                model.title,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Text(
+                model.observation,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Text(
+                model.datetime,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: 200,
+                height: 200,
+                child: QrImage(
+                  data: model.url,
+                  //size: 150,
+                  version: QrVersions.auto,
+                  //errorStateBuilder: (context, error) => Text(error.toString()),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +164,9 @@ class HistoryPage extends StatelessWidget {
                                       )
                                     : SizedBox(),
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    myAlert(context, qrList[index]);
+                                  },
                                   icon: Icon(Icons.qr_code),
                                   color: Colors.white,
                                 ),
